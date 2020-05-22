@@ -3,22 +3,37 @@ import { Card, CardContent, Typography, Grid, StylesProvider } from '@material-u
 import CountUp from 'react-countup';
 import cx from 'classnames';
 import styles from './Cards.module.css';
-const Cards = ({data: {confirmed, recovered, deaths, lastUpdate} }) => {
-    if(!confirmed) {
+const Cards = ({ data: { confirmed, recovered, deaths, lastUpdate } }) => {
+    if (!confirmed) {
         return 'Loading...'
     }
+    const domains = [{
+        name: "infected",
+        value: confirmed.value,
+        message: "Number of active cases of COVID-19"
+    },
+    {
+        name: "recovered",
+        value: recovered.value,
+        message: "Number of recoveries from COVID-19"
+    },
+    {
+        name: "deaths",
+        value: deaths.value,
+        message: "Number of deaths caused by COVID-19"
+    }];
     return (
         <div className={styles.container}>
             <Grid container spacing={3} justify="center" >
-                <Grid item component={Card} xs={12} md={3} className={cx(styles.card, styles.infected)}>
+                {domains.map((domain, index) => (<Grid key={index} item component={Card} xs={12} md={3} className={cx(styles.card, styles[domain.name])}>
                     <CardContent>
                         <Typography color="textSecondary" gutterBottom>
-                            Infected
+                            {domain.name.charAt(0).toUpperCase() + domain.name.slice(1)}
                         </Typography>
                         <Typography variant="h5">
-                            <CountUp 
+                            <CountUp
                                 start={0}
-                                end={confirmed.value}
+                                end={domain.value}
                                 duration={2.5}
                                 separator=","
                             />
@@ -27,11 +42,13 @@ const Cards = ({data: {confirmed, recovered, deaths, lastUpdate} }) => {
                             {new Date(lastUpdate).toDateString()}
                         </Typography>
                         <Typography variant="body2">
-                            Number of active cases of COVID-19
+                            {domain.message}
+
                         </Typography>
                     </CardContent>
-                </Grid>
-                <Grid item component={Card} xs={12} md={3} className={cx(styles.card, styles.recovered)}>
+                </Grid>))}
+
+                {/* <Grid item component={Card} xs={12} md={3} className={cx(styles.card, styles.recovered)}>
                     <CardContent>
                         <Typography color="textSecondary" gutterBottom>
                             Recovered
@@ -72,7 +89,7 @@ const Cards = ({data: {confirmed, recovered, deaths, lastUpdate} }) => {
                             Number of deaths caused by COVID-19
                         </Typography>
                     </CardContent>
-                </Grid>
+                </Grid> */}
             </Grid>
         </div>
     )
